@@ -16,6 +16,17 @@ const nextConfig: NextConfig = {
   // /about → /about/ (consistent canonical URLs).
   trailingSlash: true,
   poweredByHeader: false,
+  // One canonical host: www.vanshikasecurity.com → vanshikasecurity.com.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.vanshikasecurity.com" }],
+        destination: "https://vanshikasecurity.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

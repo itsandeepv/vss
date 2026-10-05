@@ -7,7 +7,7 @@
  * Never replace a null with a guess.
  */
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.example.com").replace(/\/$/, ""); // TODO: confirm domain
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vanshikasecurity.com").replace(/\/$/, "");
 
 export const business = {
   name: "Vanshika Security Service",
@@ -37,6 +37,11 @@ export const business = {
   mapEmbedUrl: "https://maps.google.com/maps?q=Joniawas%2C%20Farrukhnagar%2C%20Gurugram%2C%20Haryana%20122504&z=14&output=embed",
   mapLinkUrl: "https://www.google.com/maps/search/?api=1&query=Joniawas%2C+Farrukhnagar%2C+Gurugram%2C+Haryana+122504",
   areaServed: ["Gurugram", "Farrukhnagar", "Pataudi", "Haryana", "Delhi NCR"],
+  /**
+   * Haryana / NCR cities named in SEO metadata and schema (not shown in the UI).
+   * TODO: confirm — trim to the cities VSS actually deploys to.
+   */
+  seoCities: ["Gurugram", "Manesar", "Farrukhnagar", "Pataudi", "Sohna", "Rewari", "Jhajjar", "Bahadurgarh", "Faridabad", "Sonipat", "Rohtak", "Panipat", "Delhi NCR"],
   /** TODO: confirm — no social profiles in the brochure. Add URLs here (used in footer + schema). */
   social: [] as { label: string; url: string }[],
 };

@@ -5,10 +5,17 @@ import { Icon } from "@/components/Icon";
 import { AboutSplit, CtaBand, MdFeature, PageHero, Psara, SectionHead, StatsStrip, TeamGrid, WhyUs } from "@/components/sections";
 
 export const metadata = pageMeta({
-  title: "About Us – PSARA Licensed Security Agency in Gurugram",
+  title: "About Us – PSARA Licensed Security Agency in Gurugram, Haryana",
   description:
-    "Vanshika Security Service (VSS), formed in 2016 and led by Capt. Laxmi Narain (32 years, Indian Army). 1500+ trained manpower, 40+ clients and 120+ sites across North India.",
+    "Vanshika Security Service (VSS), formed in 2016 and led by Capt. Laxmi Narain (32 years, Indian Army). 1500+ trained manpower, 40+ clients and 120+ sites across Haryana, Delhi NCR and North India.",
   path: "/about/",
+  keywords: [
+    "PSARA licensed security agency Haryana",
+    "ex-army security agency Gurugram",
+    "trusted security company Haryana",
+    "Vanshika Security Service",
+    "Capt. Laxmi Narain",
+  ],
 });
 
 export default function AboutPage() {

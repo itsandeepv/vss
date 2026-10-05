@@ -24,20 +24,87 @@ export function normalisePhone(v: string) {
   return d;
 }
 
+export const LIMITS = { name: 60, email: 100, company: 100, location: 100, message: 1000, guardsMax: 5000 } as const;
+
+const NAME_RE = /^[\p{L}\p{M}][\p{L}\p{M} .'-]*$/u;
+const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+const PLACE_RE = /^[\p{L}\p{M}0-9 .,&()'/#-]+$/u;
+
+/** Validates one field; returns an error message or "" when valid. Same rules run in the browser and on the server. */
+export function validateField(k: keyof Enquiry, raw: string): string {
+  const v = raw.trim();
+  switch (k) {
+    case "name": {
+      if (!v) return "Please enter your name.";
+      if (!NAME_RE.test(v)) return "Name can only contain letters, spaces, dots and hyphens.";
+      if (v.replace(/[^\p{L}]/gu, "").length < 2) return "Please enter your full name.";
+      if (v.length > LIMITS.name) return `Name must be under ${LIMITS.name} characters.`;
+      return "";
+    }
+    case "phone": {
+      if (!v) return "Please enter your mobile number.";
+      if (/[^\d+\s-]/.test(v)) return "Use digits only, e.g. 98765 43210.";
+      const d = normalisePhone(v);
+      if (d.length !== 10) return "Mobile number must be 10 digits.";
+      if (!/^[6-9]/.test(d)) return "Indian mobile numbers start with 6, 7, 8 or 9.";
+      if (/^(\d)\1{9}$/.test(d)) return "Please enter a real mobile number.";
+      return "";
+    }
+    case "email": {
+      if (!v) return "";
+      if (v.length > LIMITS.email || !EMAIL_RE.test(v) || v.includes("..")) return "Enter a valid email, e.g. name@company.com.";
+      return "";
+    }
+    case "company":
+    case "location": {
+      if (!v) return "";
+      if (v.length > LIMITS[k]) return `Please keep this under ${LIMITS[k]} characters.`;
+      if (!PLACE_RE.test(v) || !/[\p{L}]/u.test(v))
+        return k === "company" ? "Enter a valid company or site name." : "Enter a valid location, e.g. Manesar, Gurugram.";
+      return "";
+    }
+    case "service":
+      return services.some((s) => s.title === v) ? "" : "Please choose the service you need.";
+    case "guards": {
+      if (!v) return "";
+      if (!/^\d+$/.test(v)) return "Enter a number, e.g. 10.";
+      const n = Number(v);
+      if (n < 1 || n > LIMITS.guardsMax) return `Enter a number between 1 and ${LIMITS.guardsMax}.`;
+      return "";
+    }
+    case "message":
+      return v.length > LIMITS.message ? `Please keep your message under ${LIMITS.message} characters.` : "";
+  }
+}
+
 export function validateEnquiry(f: Enquiry): EnquiryErrors {
   const e: EnquiryErrors = {};
-  const name = f.name.trim();
-  if (name.length < 2) e.name = "Please enter your name.";
-  else if (name.length > 80) e.name = "Name is too long.";
-  if (!/^[6-9]\d{9}$/.test(normalisePhone(f.phone))) e.phone = "Enter a valid 10-digit Indian mobile number.";
-  if (f.email.trim() && (f.email.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.trim())))
-    e.email = "Enter a valid email address.";
-  if (!services.some((s) => s.title === f.service)) e.service = "Please choose a service.";
-  if (f.guards.trim() && !/^\d{1,5}$/.test(f.guards.trim())) e.guards = "Enter a number.";
-  if (f.company.length > 120) e.company = "Too long.";
-  if (f.location.length > 120) e.location = "Too long.";
-  if (f.message.length > 2000) e.message = "Please keep your message under 2000 characters.";
+  for (const k of ENQUIRY_FIELDS) {
+    const msg = validateField(k, f[k]);
+    if (msg) e[k] = msg;
+  }
   return e;
+}
+
+/** Light input filtering while typing — blocks characters a field can never contain. */
+export function filterInput(k: keyof Enquiry, v: string): string {
+  switch (k) {
+    case "name":
+      return v.replace(/[^\p{L}\p{M} .'-]/gu, "").replace(/\s{2,}/g, " ");
+    case "phone": {
+      const cleaned = v.replace(/[^\d+\s-]/g, "");
+      // Allow +91 / 0 prefixes, but never more than 10 digits after them.
+      const digits = cleaned.replace(/\D/g, "");
+      const max = cleaned.trim().startsWith("+") || digits.startsWith("91") ? 12 : digits.startsWith("0") ? 11 : 10;
+      return digits.length > max ? cleaned.slice(0, cleaned.length - (digits.length - max)) : cleaned;
+    }
+    case "email":
+      return v.replace(/\s/g, "");
+    case "guards":
+      return v.replace(/\D/g, "").slice(0, 4);
+    default:
+      return v;
+  }
 }
 
 /** Trim, strip control characters (incl. CR/LF — no header injection) and normalise the phone. */

@@ -17,10 +17,24 @@ const find = (slug: string) => services.find((s) => s.id === slug);
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const s = find((await params).slug);
   if (!s) return {};
+  const img = s.banner ?? s.image;
+  const name = s.title.toLowerCase();
   return pageMeta({
-    title: `${s.title} in Gurugram`,
-    description: `${s.text} PSARA licensed agency, Farrukhnagar, Gurugram.`,
+    title: `${s.title} in Gurugram, Haryana`,
+    description: `${s.text} PSARA licensed agency in Gurugram serving Haryana & Delhi NCR. Free site survey & quote.`,
     path: serviceHref(s.id),
+    keywords: [
+      `${name} in Gurugram`,
+      `${name} in Gurgaon`,
+      `${name} in Haryana`,
+      `${name} in Manesar`,
+      `${name} in Delhi NCR`,
+      `best ${name} agency Haryana`,
+      `${name} near me`,
+      "PSARA licensed security agency",
+      business.name,
+    ],
+    ...(img ? { image: { url: img.src, alt: img.alt } } : {}),
   });
 }
 
@@ -30,15 +44,29 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const [primary, helpline] = business.phones;
   const others = services.filter((o) => o.id !== s.id);
   const ideal = industries.filter((ind) => s.idealFor.includes(ind.title));
+  const url = `${SITE_URL}${serviceHref(s.id)}`;
+  const img = s.banner ?? s.image;
   const schema = {
     "@context": "https://schema.org",
-    "@type": "Service",
-    name: s.title,
-    description: s.intro,
-    serviceType: s.title,
-    url: `${SITE_URL}${serviceHref(s.id)}`,
-    provider: { "@id": `${SITE_URL}/#business` },
-    areaServed: business.areaServed.map((name) => ({ "@type": "Place", name })),
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": `${url}#service`,
+        name: `${s.title} in Gurugram, Haryana`,
+        description: s.intro,
+        serviceType: s.title,
+        url,
+        ...(img ? { image: `${SITE_URL}${img.src}` } : {}),
+        provider: { "@id": `${SITE_URL}/#business` },
+        areaServed: business.seoCities.map((name) => ({ "@type": "Place", name })),
+        audience: { "@type": "BusinessAudience", name: s.idealFor.join(", ") },
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: `${s.title} – what's included`,
+          itemListElement: s.includes.map((name) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name } })),
+        },
+      },
+    ],
   };
 
   return (

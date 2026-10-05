@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { business, services, whatsappHref } from "@/content/site";
-import { normalisePhone, validateEnquiry, type Enquiry, type EnquiryErrors } from "@/lib/enquiry";
+import { LIMITS, filterInput, normalisePhone, validateEnquiry, validateField, type Enquiry, type EnquiryErrors } from "@/lib/enquiry";
 import { Icon } from "./Icon";
 
 /**
@@ -33,6 +33,8 @@ async function fetchToken() {
 export function ContactForm({ defaultService = "" }: { defaultService?: string }) {
   const [fields, setFields] = useState<Fields>({ ...empty, service: defaultService });
   const [errors, setErrors] = useState<Errors>({});
+  // Fields the visitor has left at least once — they get live validation from then on.
+  const [touched, setTouched] = useState<Partial<Record<keyof Fields, boolean>>>({});
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const token = useRef<Promise<string> | null>(null);
   const statusRef = useRef<HTMLDivElement>(null);
@@ -43,9 +45,19 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
     token.current = fetchToken();
   }, []);
 
+  const check = (k: keyof Fields, value: string) => setErrors((er) => ({ ...er, [k]: validateField(k, value) || undefined }));
+
   const set = (k: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFields((f) => ({ ...f, [k]: e.target.value }));
-    if (errors[k]) setErrors((er) => ({ ...er, [k]: undefined }));
+    const value = filterInput(k, e.target.value);
+    setFields((f) => ({ ...f, [k]: value }));
+    // Live feedback once a field has been visited (or already shows an error); selects validate immediately.
+    if (touched[k] || errors[k] || k === "service") check(k, value);
+  };
+
+  const blur = (k: keyof Fields) => () => {
+    setTouched((t) => ({ ...t, [k]: true }));
+    // Don't nag about an empty required field the visitor merely tabbed through — that's checked on submit.
+    if (fields[k].trim() || errors[k]) check(k, fields[k]);
   };
 
   const focusFirst = (errs: Errors) => {
@@ -61,6 +73,7 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
     const botcheck = String(new FormData(e.currentTarget).get("botcheck") || "");
     const errs = validateEnquiry(fields);
     setErrors(errs);
+    setTouched({ name: true, phone: true, email: true, company: true, location: true, service: true, guards: true, message: true });
     if (focusFirst(errs)) return;
 
     setStatus({ kind: "sending" });
@@ -92,6 +105,8 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
       }
       const name = fields.name.trim();
       setFields(empty);
+      setTouched({});
+      setErrors({});
       token.current = fetchToken();
       setStatus({ kind: "success", message: `Thank you, ${name}! Your enquiry has been sent. Our team will call you back shortly.` });
     } catch (err) {
@@ -107,17 +122,22 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
     if (status.kind === "success" || status.kind === "error") statusRef.current?.focus();
   }, [status.kind]);
 
-  const field = (k: keyof Fields) => ({
+  const isValid = (k: keyof Fields) => Boolean(touched[k] && fields[k].trim() && !errors[k]);
+  const describedBy = (k: keyof Fields, hint?: boolean) => (errors[k] ? `f-${k}-err` : hint ? `f-${k}-hint` : undefined); // the hint is replaced by the error when one shows
+  const field = (k: keyof Fields, hint?: boolean) => ({
     id: `f-${k}`,
     name: k,
     value: fields[k],
     onChange: set(k),
+    onBlur: blur(k),
     "aria-invalid": errors[k] ? true : undefined,
-    "aria-describedby": errors[k] ? `f-${k}-err` : undefined,
+    "aria-describedby": describedBy(k, hint),
   });
+  const cls = (k: keyof Fields, extra = "") => `field${extra}${errors[k] ? " is-invalid" : isValid(k) ? " is-valid" : ""}`;
   const err = (k: keyof Fields) =>
     errors[k] ? (
       <p className="field-error" id={`f-${k}-err`}>
+        <Icon name="close" size={14} />
         {errors[k]}
       </p>
     ) : null;
@@ -137,17 +157,25 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
       </div>
 
       <div className="form-grid">
-        <div className="field">
+        <div className={cls("name")}>
           <label htmlFor="f-name">
             Name{" "}
             <span className="req" aria-hidden="true">
               *
             </span>
           </label>
-          <input type="text" autoComplete="name" required maxLength={80} {...field("name")} />
+          <input
+            type="text"
+            autoComplete="name"
+            autoCapitalize="words"
+            required
+            maxLength={LIMITS.name}
+            placeholder="e.g. Rahul Sharma"
+            {...field("name")}
+          />
           {err("name")}
         </div>
-        <div className="field">
+        <div className={cls("phone")}>
           <label htmlFor="f-phone">
             Phone{" "}
             <span className="req" aria-hidden="true">
@@ -156,31 +184,62 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
           </label>
           <input
             type="tel"
-            inputMode="numeric"
+            inputMode="tel"
             autoComplete="tel-national"
             required
-            placeholder="10-digit mobile"
+            placeholder="e.g. 98765 43210"
             maxLength={16}
-            {...field("phone")}
+            {...field("phone", true)}
           />
-          {err("phone")}
+          {err("phone") ?? (
+            <p className="field-hint" id="f-phone-hint">
+              10-digit Indian mobile. We&apos;ll call you on this number.
+            </p>
+          )}
         </div>
-        <div className="field">
-          <label htmlFor="f-email">Email</label>
-          <input type="email" autoComplete="email" maxLength={120} {...field("email")} />
+        <div className={cls("email")}>
+          <label htmlFor="f-email">
+            Email <span className="opt">(optional)</span>
+          </label>
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            autoCapitalize="off"
+            spellCheck={false}
+            maxLength={LIMITS.email}
+            placeholder="e.g. name@company.com"
+            {...field("email")}
+          />
           {err("email")}
         </div>
-        <div className="field">
-          <label htmlFor="f-company">Company / Site name</label>
-          <input type="text" autoComplete="organization" maxLength={120} {...field("company")} />
+        <div className={cls("company")}>
+          <label htmlFor="f-company">
+            Company / Site name <span className="opt">(optional)</span>
+          </label>
+          <input
+            type="text"
+            autoComplete="organization"
+            maxLength={LIMITS.company}
+            placeholder="e.g. ABC Logistics Pvt Ltd"
+            {...field("company")}
+          />
           {err("company")}
         </div>
-        <div className="field">
-          <label htmlFor="f-location">Location</label>
-          <input type="text" autoComplete="address-level2" maxLength={120} placeholder="e.g. Manesar, Gurugram" {...field("location")} />
+        <div className={cls("location")}>
+          <label htmlFor="f-location">
+            Location <span className="opt">(optional)</span>
+          </label>
+          <input
+            type="text"
+            autoComplete="address-level2"
+            maxLength={LIMITS.location}
+            placeholder="e.g. Manesar, Gurugram"
+            {...field("location")}
+          />
           {err("location")}
         </div>
-        <div className="field">
+        <div className={cls("service")}>
           <label htmlFor="f-service">
             Service Required{" "}
             <span className="req" aria-hidden="true">
@@ -188,7 +247,9 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
             </span>
           </label>
           <select required {...field("service")}>
-            <option value="">Select a service</option>
+            <option value="" disabled>
+              Select the service you need
+            </option>
             {services.map((s) => (
               <option key={s.id} value={s.title}>
                 {s.title}
@@ -197,15 +258,28 @@ export function ContactForm({ defaultService = "" }: { defaultService?: string }
           </select>
           {err("service")}
         </div>
-        <div className="field">
-          <label htmlFor="f-guards">Number of Guards</label>
-          <input type="text" inputMode="numeric" maxLength={5} placeholder="Optional" {...field("guards")} />
+        <div className={cls("guards")}>
+          <label htmlFor="f-guards">
+            Number of Guards <span className="opt">(optional)</span>
+          </label>
+          <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={4} placeholder="e.g. 10" {...field("guards")} />
           {err("guards")}
         </div>
-        <div className="field field-full">
-          <label htmlFor="f-message">Message</label>
-          <textarea rows={4} maxLength={2000} placeholder="Tell us about your site, shifts and timelines" {...field("message")} />
-          {err("message")}
+        <div className={cls("message", " field-full")}>
+          <label htmlFor="f-message">
+            Message <span className="opt">(optional)</span>
+          </label>
+          <textarea
+            rows={4}
+            maxLength={LIMITS.message}
+            placeholder="e.g. Need 10 guards for a warehouse, day & night shifts, starting next month."
+            {...field("message", true)}
+          />
+          {err("message") ?? (
+            <p className="field-hint field-count" id="f-message-hint" aria-live="polite">
+              {fields.message.length}/{LIMITS.message}
+            </p>
+          )}
         </div>
       </div>
 

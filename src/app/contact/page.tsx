@@ -6,10 +6,16 @@ import { PrefilledContactForm } from "@/components/PrefilledContactForm";
 import { ContactBlock, PageHero } from "@/components/sections";
 
 export const metadata = pageMeta({
-  title: "Contact Us – Get a Free Security Quote",
+  title: "Contact Us – Free Security Quote in Gurugram, Haryana",
   description:
-    "Call +91 86073 23237 or send an enquiry to Vanshika Security Service, Farrukhnagar, Gurugram. Free site survey and quote for security guards and manpower.",
+    "Call +91 86073 23237 (24×7: +91 74042 64232) or send an enquiry to Vanshika Security Service, Farrukhnagar, Gurugram, Haryana. Free site survey and quote for security guards and manpower.",
   path: "/contact/",
+  keywords: [
+    "security agency contact number Gurugram",
+    "security guard quote Haryana",
+    "hire security guards Gurugram",
+    "security agency Farrukhnagar",
+  ],
 });
 
 export default function ContactPage() {

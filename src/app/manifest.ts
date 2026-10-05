@@ -7,6 +7,9 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: business.legalName,
     short_name: business.shortName,
+    description: "PSARA licensed security guard, bouncer, PSO and manpower services in Gurugram, Haryana and Delhi NCR.",
+    lang: "en-IN",
+    categories: ["business"],
     start_url: "/",
     display: "browser",
     background_color: "#0b1324",

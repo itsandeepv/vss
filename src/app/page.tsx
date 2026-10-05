@@ -26,7 +26,7 @@ function Hero() {
           <h1 id="hero-title" className="hero-anim">
             {business.name}
           </h1>
-          <p className="hero-sub hero-anim">PSARA Licensed Security &amp; Manpower Solutions</p>
+          <p className="hero-sub hero-anim">PSARA Licensed Security &amp; Manpower Services in Gurugram, Haryana</p>
           <p className="hero-text hero-anim">{business.strapline}</p>
           <div className="hero-actions hero-anim">
             <a href="#contact" className="btn btn-gold">
