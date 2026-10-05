@@ -41,5 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local form test logs
-/.form-log
+
+# local mail sink output
+/.mail-sink

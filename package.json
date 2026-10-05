@@ -4,27 +4,33 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && node scripts/postbuild.mjs",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "images": "node scripts/optimize-images.mjs",
-    "mock:form": "node scripts/mock-form-endpoint.mjs",
-    "preview": "npx --yes serve@14 out -l 3000",
-    "video": "node scripts/make-hero-video.mjs"
+    "video": "node scripts/make-hero-video.mjs",
+    "start:local": "node --env-file=.env .next/standalone/server.js",
+    "mail:verify": "node --env-file=.env scripts/mail-verify.mjs",
+    "mail:sink": "node scripts/smtp-sink.mjs"
   },
   "dependencies": {
     "next": "16.3.8",
+    "nodemailer": "^10.0.14",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/smtp-server": "^3.5.13",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "ffmpeg-static": "^5.3.0",
+    "mailparser": "^3.9.35",
     "sharp": "^0.35.5",
+    "smtp-server": "^3.19.17",
     "typescript": "^5"
   }
 }

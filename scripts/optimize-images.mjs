@@ -4,11 +4,13 @@
  * Originals live in /_source (never shipped). This script writes optimised
  * copies into /public (shipped) and the favicon set into /src/app:
  *
- *   _source/vss-logo.png          → public/images/logo-{96,192,400,600}.webp, logo-512.png,
+ *   _source/vss-logo.png          → public/images/logo-{96,192,400,600}.webp, logo-512.png, logo-email.png,
  *                                   src/app/icon.png, apple-icon.png, favicon.ico,
  *                                   public/og-image.jpg (1200×630)
  *   _source/photos/*.{jpg,jpeg,png,webp}   → public/images/photos/<name>.webp      (max 1920px wide — hero)
  *                                          + public/images/photos/<name>-800.webp  (800px wide — cards, mobile hero)
+ *   _source/stock/*.jpg                   → public/images/stock/<name>.webp (1600px) + <name>-800.webp
+ *                                          (free-licence images; credits in _source/stock/credits.json)
  *   _source/flyers/*.{jpg,jpeg,png,webp}  → public/images/flyers/<name>.webp (1600px, lightbox) + <name>-800.webp (gallery grid)
  *   _source/team/*.{jpg,jpeg,png,webp}     → public/images/team/<name>.webp     (max 600px wide — portraits)
  *   _source/clients/*.{jpg,jpeg,png,webp,svg} → public/images/clients/<name>.webp (max 120px tall)
@@ -39,6 +41,8 @@ async function brand() {
       .toFile(pub("images", `logo-${h}.webp`));
   }
   await sharp(logo).resize({ height: 512 }).png({ palette: true, compressionLevel: 9 }).toFile(pub("images", "logo-512.png"));
+  // Email header logo (PNG — Outlook doesn't support WebP); attached inline by /api/enquiry.
+  await sharp(logo).resize({ height: 110 }).png({ palette: true, compressionLevel: 9 }).toFile(pub("images", "logo-email.png"));
 
   // Favicons: logo centred on a square transparent canvas.
   const square = async (size, bg = { r: 0, g: 0, b: 0, alpha: 0 }, pad = 0.06) => {
@@ -125,6 +129,7 @@ async function folder(name, variants) {
 
 await brand();
 await folder("photos", { "": { width: 1920 }, "-800": { width: 800 } });
+await folder("stock", { "": { width: 1600 }, "-800": { width: 800 } });
 await folder("flyers", { "": { width: 1600 }, "-800": { width: 800 } });
 await folder("team", { "": { width: 600 } });
 await folder("clients", { "": { height: 120 } });

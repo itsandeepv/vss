@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /** Exported as out/404.html; .htaccess serves it for unknown URLs. */
 export default function NotFound() {
   return (
-    <main className="notfound">
+    <section className="notfound">
       <div className="notfound-card">
         {/* eslint-disable-next-line @next/next/no-img-element -- static export */}
         <img src="/images/logo-192.webp" width={96} height={115} alt="Vanshika Security Service logo" />
@@ -26,6 +26,6 @@ export default function NotFound() {
           </a>
         </div>
       </div>
-    </main>
+    </section>
   );
 }

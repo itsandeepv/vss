@@ -1,13 +1,29 @@
 import type { NextConfig } from "next";
 
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+];
+
 const nextConfig: NextConfig = {
-  // Static HTML export → `npm run build` writes the deployable site to /out.
-  output: "export",
+  // Runs as a small Node.js server (needed for SMTP in /api/enquiry). Pages are still prerendered
+  // at build time. `standalone` produces .next/standalone/server.js — see README → Deployment.
+  output: "standalone",
   // Images are pre-optimised to WebP by `npm run images`, so no runtime optimiser is needed.
   images: { unoptimized: true },
-  // Emit /404.html and keep URLs as plain files (works on any Apache/cPanel host).
-  trailingSlash: false,
+  // /about → /about/ (consistent canonical URLs).
+  trailingSlash: true,
   poweredByHeader: false,
+  async headers() {
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      { source: "/images/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
+      { source: "/video/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
+      { source: "/og-image.jpg", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { SITE_URL, business, psara } from "@/content/site";
+import { pageMeta } from "@/lib/meta";
+import { Header } from "@/components/Header";
+import { Footer, TopBar, WhatsAppFloat } from "@/components/Chrome";
+import { Reveal } from "@/components/Reveal";
 import "./globals.css";
 
 // Self-hosted at build time by next/font — no request to Google from visitors' browsers.
@@ -13,8 +17,8 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title,
-  description,
+  ...pageMeta({ title, description, path: "/", absoluteTitle: true }),
+  title: { default: title, template: `%s | ${business.name}` },
   keywords: [
     "security guard services Gurugram",
     "security agency Farrukhnagar",
@@ -24,25 +28,7 @@ export const metadata: Metadata = {
     "bouncer services Gurugram",
     "housekeeping services Gurugram",
   ],
-  alternates: { canonical: "/" },
   applicationName: business.name,
-  openGraph: {
-    type: "website",
-    url: "/",
-    siteName: business.legalName,
-    title,
-    description,
-    locale: "en_IN",
-    images: [
-      { url: "/og-image.jpg", width: 1200, height: 630, alt: "Vanshika Security Service (VSS) — PSARA licensed security & manpower" },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title,
-    description,
-    images: ["/og-image.jpg"],
-  },
   formatDetection: { telephone: false },
   robots: { index: true, follow: true },
 };
@@ -94,7 +80,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en-IN" className={`${poppins.variable} ${inter.variable}`}>
       <body>
-        {children}
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        <div className="scroll-progress" aria-hidden="true" />
+        <TopBar />
+        <Header />
+        <main id="main">{children}</main>
+        <Footer />
+        <WhatsAppFloat />
+        <Reveal />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </body>
     </html>

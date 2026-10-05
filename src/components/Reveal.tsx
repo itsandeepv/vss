@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 /**
@@ -8,6 +9,8 @@ import { useEffect } from "react";
  * so content is never hidden when JS is off or motion is reduced.
  */
 export function Reveal() {
+  // Re-run on client-side navigation so each new page's sections are observed.
+  const pathname = usePathname();
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
     const els = document.querySelectorAll<HTMLElement>(".reveal");
@@ -30,6 +33,6 @@ export function Reveal() {
     );
     els.forEach((el) => !el.classList.contains("is-visible") && io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [pathname]);
   return null;
 }

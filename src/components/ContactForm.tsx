@@ -2,84 +2,45 @@
 
 import { useEffect, useRef, useState } from "react";
 import { business, services, whatsappHref } from "@/content/site";
+import { normalisePhone, validateEnquiry, type Enquiry, type EnquiryErrors } from "@/lib/enquiry";
 import { Icon } from "./Icon";
 
 /**
- * Enquiry form for a static site. Submissions go to Web3Forms (https://web3forms.com),
- * which emails them to the address registered with the access key. No SMTP credentials
- * ever reach the browser: the access key only identifies the inbox and is designed to be public.
+ * Enquiry form. Posts JSON to /api/enquiry/, which validates again on the server and emails the
+ * enquiry over SMTP (see src/app/api/enquiry/route.ts). SMTP credentials stay on the server.
  *
- * Spam protection (all client-side because there is no server of our own):
- *  - hidden honeypot field (`botcheck`, also checked by Web3Forms server-side)
- *  - reject submissions made < 3 s after page load
- *  - per-browser rate limit: 5 submissions / hour (localStorage)
- * Web3Forms adds its own server-side spam filtering and rate limiting on top.
+ * Spam protection: hidden honeypot field, a signed time token fetched on load (server rejects
+ * submissions < 3 s after it was issued), and a per-IP rate limit on the server.
  */
 
-const ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT || "https://api.web3forms.com/submit";
-const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "";
-const MIN_FILL_MS = 3000;
-const RATE_LIMIT = 5;
-const RATE_WINDOW_MS = 60 * 60 * 1000;
-const RATE_KEY = "vss-enquiries";
+const API = "/api/enquiry/";
 
-type Fields = {
-  name: string;
-  phone: string;
-  email: string;
-  company: string;
-  location: string;
-  service: string;
-  guards: string;
-  message: string;
-};
-type Errors = Partial<Record<keyof Fields, string>>;
+type Fields = Enquiry;
+type Errors = EnquiryErrors;
 type Status = { kind: "idle" | "sending" | "success" | "error"; message?: string };
 
 const empty: Fields = { name: "", phone: "", email: "", company: "", location: "", service: "", guards: "", message: "" };
 
-/** Accepts "98765 43210", "+91 9876543210", "09876543210" → "9876543210". */
-export function normalisePhone(v: string) {
-  let d = v.replace(/\D/g, "");
-  if (d.length === 12 && d.startsWith("91")) d = d.slice(2);
-  if (d.length === 11 && d.startsWith("0")) d = d.slice(1);
-  return d;
-}
-
-function validate(f: Fields): Errors {
-  const e: Errors = {};
-  const name = f.name.trim();
-  if (name.length < 2) e.name = "Please enter your name.";
-  else if (name.length > 80) e.name = "Name is too long.";
-  if (!/^[6-9]\d{9}$/.test(normalisePhone(f.phone))) e.phone = "Enter a valid 10-digit Indian mobile number.";
-  if (f.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.trim())) e.email = "Enter a valid email address.";
-  if (!services.some((s) => s.title === f.service)) e.service = "Please choose a service.";
-  if (f.guards.trim() && !/^\d{1,5}$/.test(f.guards.trim())) e.guards = "Enter a number.";
-  if (f.company.length > 120) e.company = "Too long.";
-  if (f.location.length > 120) e.location = "Too long.";
-  if (f.message.length > 2000) e.message = "Please keep your message under 2000 characters.";
-  return e;
-}
-
-function recentSubmissions(): number[] {
+async function fetchToken() {
   try {
-    const list = JSON.parse(localStorage.getItem(RATE_KEY) || "[]") as number[];
-    return list.filter((t) => Date.now() - t < RATE_WINDOW_MS);
+    const r = await fetch(API, { cache: "no-store" });
+    return ((await r.json()) as { token?: string }).token || "";
   } catch {
-    return [];
+    return "";
   }
 }
 
-export function ContactForm() {
-  const [fields, setFields] = useState<Fields>(empty);
+export function ContactForm({ defaultService = "" }: { defaultService?: string }) {
+  const [fields, setFields] = useState<Fields>({ ...empty, service: defaultService });
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const loadedAt = useRef(0);
+  const token = useRef<Promise<string> | null>(null);
   const statusRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Ask the server for a time-stamped token as soon as the form mounts.
   useEffect(() => {
-    loadedAt.current = Date.now();
+    token.current = fetchToken();
   }, []);
 
   const set = (k: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -87,81 +48,51 @@ export function ContactForm() {
     if (errors[k]) setErrors((er) => ({ ...er, [k]: undefined }));
   };
 
+  const focusFirst = (errs: Errors) => {
+    const first = (Object.keys(errs) as (keyof Fields)[]).find((k) => errs[k]);
+    if (first) formRef.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+    return Boolean(first);
+  };
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (status.kind === "sending") return;
 
-    const fd = new FormData(e.currentTarget);
-    // Honeypot filled → silently pretend success so bots learn nothing.
-    if (String(fd.get("botcheck") || "")) {
-      setStatus({ kind: "success", message: "Thank you! We will call you back shortly." });
-      return;
-    }
-
-    const errs = validate(fields);
+    const botcheck = String(new FormData(e.currentTarget).get("botcheck") || "");
+    const errs = validateEnquiry(fields);
     setErrors(errs);
-    const firstInvalid = (Object.keys(errs) as (keyof Fields)[])[0];
-    if (firstInvalid) {
-      formRef.current?.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
-      return;
-    }
-
-    if (Date.now() - loadedAt.current < MIN_FILL_MS) {
-      setStatus({ kind: "error", message: "That was quick! Please wait a few seconds and try again." });
-      return;
-    }
-    const recent = recentSubmissions();
-    if (recent.length >= RATE_LIMIT) {
-      setStatus({
-        kind: "error",
-        message: `Too many enquiries from this device. Please call us on ${business.phones[0].display} instead.`,
-      });
-      return;
-    }
-    if (!ACCESS_KEY && !process.env.NEXT_PUBLIC_FORM_ENDPOINT) {
-      console.warn("NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY is not set — see README.");
-      setStatus({
-        kind: "error",
-        message: `The form is not configured yet. Please call ${business.phones[0].display} or message us on WhatsApp.`,
-      });
-      return;
-    }
-
-    const name = fields.name.trim();
-    const phone = normalisePhone(fields.phone);
-    const payload = {
-      access_key: ACCESS_KEY,
-      subject: `New Enquiry – ${fields.service} – ${name}`,
-      from_name: "VSS Website",
-      ...(fields.email.trim() ? { replyto: fields.email.trim() } : {}),
-      botcheck: "",
-      Name: name,
-      Phone: `+91 ${phone}`,
-      Email: fields.email.trim() || "—",
-      "Company / Site": fields.company.trim() || "—",
-      Location: fields.location.trim() || "—",
-      "Service Required": fields.service,
-      "Number of Guards": fields.guards.trim() || "—",
-      Message: fields.message.trim() || "—",
-      "Submitted From": window.location.href,
-    };
+    if (focusFirst(errs)) return;
 
     setStatus({ kind: "sending" });
     try {
-      const res = await fetch(ENDPOINT, {
+      const res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...fields,
+          phone: normalisePhone(fields.phone),
+          botcheck,
+          token: await (token.current ?? fetchToken()),
+          page: window.location.href,
+        }),
       });
-      const data = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
-      if (!res.ok || !data.success) throw new Error(data.message || `HTTP ${res.status}`);
-
-      try {
-        localStorage.setItem(RATE_KEY, JSON.stringify([...recent, Date.now()]));
-      } catch {
-        /* storage unavailable — rate limit is best-effort */
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; errors?: Errors };
+      if (data.errors) {
+        setErrors(data.errors);
+        focusFirst(data.errors);
       }
+      // "Too fast"/expired tokens: get a fresh one so the next attempt can succeed.
+      if (res.status === 429 || res.status === 400) token.current = fetchToken();
+      if (!res.ok || !data.ok) {
+        setStatus({
+          kind: "error",
+          message: `${data.message || "We couldn't send your enquiry right now."} You can also call ${business.phones[0].display} or message us on WhatsApp.`,
+        });
+        return;
+      }
+      const name = fields.name.trim();
       setFields(empty);
+      token.current = fetchToken();
       setStatus({ kind: "success", message: `Thank you, ${name}! Your enquiry has been sent. Our team will call you back shortly.` });
     } catch (err) {
       console.warn("Enquiry submission failed:", err);

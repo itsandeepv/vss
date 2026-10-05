@@ -15,7 +15,8 @@ const paths: Record<
   | "check"
   | "arrow-right"
   | "download"
-  | "plus",
+  | "plus"
+  | "chevron-down",
   React.ReactNode
 > = {
   shield: <path d="M12 3l8 3v6c0 4.5-3.3 8.3-8 9-4.7-.7-8-4.5-8-9V6l8-3zm-3.5 9l2.5 2.5 4.5-5" />,
@@ -181,6 +182,7 @@ const paths: Record<
   "arrow-right": <path d="M5 12h14M13 6l6 6-6 6" />,
   download: <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />,
   plus: <path d="M12 5v14M5 12h14" />,
+  "chevron-down": <path d="M6 9l6 6 6-6" />,
 };
 
 export type AnyIcon = keyof typeof paths;
