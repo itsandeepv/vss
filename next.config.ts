@@ -33,6 +33,14 @@ const nextConfig: NextConfig = {
       { source: "/images/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
       { source: "/video/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
       { source: "/og-image.jpg", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
+      // Brochure: cache for a day (it's regenerated when content changes) and keep it out of search results.
+      {
+        source: "/downloads/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400" },
+          { key: "X-Robots-Tag", value: "noindex" },
+        ],
+      },
     ];
   },
 };

@@ -2523,6 +2523,134 @@ body.nav-open .wa-float {
   font-size: 0.86rem;
 }
 
+/* ---------- Brochure download ---------- */
+.brochure-section {
+  padding-block: 56px;
+}
+
+.brochure-card {
+  position: relative;
+  display: grid;
+  gap: 32px;
+  align-items: center;
+  overflow: hidden;
+  padding: 32px 24px;
+  border-radius: 20px;
+  background:
+    radial-gradient(60% 120% at 100% 0%, rgb(31 63 209 / 50%), transparent 70%), linear-gradient(140deg, var(--navy-800), var(--navy-950));
+  color: var(--on-dark-muted);
+  box-shadow: var(--shadow);
+}
+
+@media (min-width: 768px) {
+  .brochure-card {
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    padding: 40px 48px;
+  }
+}
+
+.brochure-thumb {
+  position: relative;
+  display: block;
+  width: 170px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow:
+    0 20px 40px rgb(0 0 0 / 40%),
+    10px 10px 0 -2px rgb(255 204 0 / 85%);
+  transform: rotate(-3deg);
+  transition: transform 0.35s ease;
+}
+
+@media (min-width: 768px) {
+  .brochure-thumb {
+    width: 100%;
+  }
+}
+
+.brochure-thumb img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.brochure-thumb:hover {
+  transform: rotate(0deg) translateY(-4px);
+}
+
+.brochure-thumb-tag {
+  position: absolute;
+  top: 10px;
+  right: -10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #d92d20;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.brochure-body h2 {
+  color: #fff;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem);
+  margin-bottom: 10px;
+}
+
+.brochure-body p {
+  max-width: 560px;
+}
+
+.brochure-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 4px 0 24px;
+  font-size: 0.9rem;
+  color: var(--on-dark);
+}
+
+.brochure-meta li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.brochure-meta svg {
+  color: var(--gold);
+}
+
+.brochure-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Top bar brochure link */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+}
+
+.topbar .topbar-brochure {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.topbar .topbar-brochure:hover {
+  color: #fff;
+}
+
+@media (max-width: 420px) {
+  .topbar-brochure span:not(.sr-only) {
+    display: none;
+  }
+}
+
 /* ---------- CTA band ---------- */
 .cta-band {
   position: relative;

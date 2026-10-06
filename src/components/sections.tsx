@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   SITE_URL,
   about,
+  brochure,
   business,
   clients,
   gallery,
@@ -18,6 +19,8 @@ import {
   type Photo,
   type Service,
 } from "@/content/site";
+import { statSync } from "node:fs";
+import path from "node:path";
 import { Icon } from "./Icon";
 import { Stats } from "./Stats";
 import { ContactForm } from "./ContactForm";
@@ -594,6 +597,72 @@ export function ContactBlock({ form, heading = true }: { form?: React.ReactNode;
           </div>
           <div className="reveal reveal-right" id="enquiry">
             {form ?? <ContactForm />}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Brochure download ---------- */
+/** File size is read at build time so the label is always accurate. */
+function brochureSize() {
+  try {
+    const bytes = statSync(path.join(process.cwd(), "public", brochure.href)).size;
+    return bytes > 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.round(bytes / 1024)} KB`;
+  } catch {
+    return "";
+  }
+}
+
+export function BrochureCta({ alt = false }: { alt?: boolean }) {
+  const size = brochureSize();
+  return (
+    <section className={`section brochure-section${alt ? " section-alt" : ""}`} aria-labelledby="brochure-title">
+      <div className="container">
+        <div className="brochure-card reveal">
+          <a
+            href={brochure.href}
+            target="_blank"
+            rel="noopener"
+            className="brochure-thumb"
+            aria-label="View the brochure online (PDF, opens in a new tab)"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- generated cover thumbnail */}
+            <img src={brochure.cover} alt="" width={600} height={849} loading="lazy" />
+            <span className="brochure-thumb-tag">PDF</span>
+          </a>
+          <div className="brochure-body">
+            <p className="eyebrow eyebrow-light">Company profile</p>
+            <h2 id="brochure-title">Download our brochure</h2>
+            <p>
+              Everything about VSS in one PDF: our services, how we work, industries we serve, our clients and contact details. Easy to
+              share with your team or management.
+            </p>
+            <ul className="brochure-meta" aria-label="File details">
+              <li>
+                <Icon name="report" size={16} />
+                PDF{size ? ` · ${size}` : ""}
+              </li>
+              <li>
+                <Icon name="check" size={16} />
+                {brochure.pages} pages, A4
+              </li>
+              <li>
+                <Icon name="phone" size={16} />
+                Print &amp; mobile friendly
+              </li>
+            </ul>
+            <div className="brochure-actions">
+              <a href={brochure.href} download={brochure.fileName} className="btn btn-gold">
+                <Icon name="download" size={18} />
+                Download Brochure
+                <span className="sr-only"> (PDF{size ? `, ${size}` : ""})</span>
+              </a>
+              <a href={brochure.href} target="_blank" rel="noopener" className="btn btn-outline-light">
+                View online<span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>

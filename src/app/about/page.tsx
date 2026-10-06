@@ -2,7 +2,18 @@ import Link from "next/link";
 import { photos, serviceHref, services } from "@/content/site";
 import { pageMeta } from "@/lib/meta";
 import { Icon } from "@/components/Icon";
-import { AboutSplit, CtaBand, MdFeature, PageHero, Psara, SectionHead, StatsStrip, TeamGrid, WhyUs } from "@/components/sections";
+import {
+  AboutSplit,
+  BrochureCta,
+  CtaBand,
+  MdFeature,
+  PageHero,
+  Psara,
+  SectionHead,
+  StatsStrip,
+  TeamGrid,
+  WhyUs,
+} from "@/components/sections";
 
 export const metadata = pageMeta({
   title: "About Us – PSARA Licensed Security Agency in Gurugram, Haryana",
@@ -54,6 +65,7 @@ export default function AboutPage() {
       <WhyUs />
       <TeamGrid />
       <Psara />
+      <BrochureCta />
       <CtaBand />
     </>
   );

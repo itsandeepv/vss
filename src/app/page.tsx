@@ -3,6 +3,7 @@ import { Icon } from "@/components/Icon";
 import { HeroVideo } from "@/components/HeroVideo";
 import {
   AboutSplit,
+  BrochureCta,
   Clients,
   ContactBlock,
   GalleryTeaser,
@@ -55,6 +56,7 @@ export default function Home() {
       <Industries />
       <Process />
       <Psara />
+      <BrochureCta />
       <GalleryTeaser />
       <Clients />
       <ContactBlock />

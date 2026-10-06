@@ -93,6 +93,7 @@ npm run dev                     # http://localhost:3000 (live reload; the form s
 | `npm run mail:verify` | Log in to the SMTP server with `.env` settings and report — **no email sent** |
 | `npm run mail:sink` | Local SMTP catcher on port 2525 that saves each email as `.mail-sink/*.html` |
 | `npm run images` | Regenerate optimised images, favicons, email logo and OG image from `_source/` |
+| `npm run brochure` | Regenerate the downloadable brochure PDF + cover thumbnail from `site.ts` (needs Chrome) |
 | `npm run video` | Rebuild the hero background video (`public/video/`) from `_source/photos/` or `_source/video/` |
 | `npm run lint` | ESLint |
 
@@ -164,6 +165,14 @@ Then reference them in `src/content/site.ts`:
 **Currently in use:** the 8 staff photos in `_source/photos/` (hero video, 6 service cards, gallery) and the 5 flyers in `_source/flyers/` (gallery → "Flyers" tab, with their full text as alt text). The images inside the brochure PDF are stock photos (several watermarked) and are not used.
 
 **Free-licence stock images** (`_source/stock/`, from Wikimedia Commons — public domain, CC0 or CC BY) fill the gaps: industry tiles, and the Gunman (cash-in-transit van), Electro-Mechanical (DG set) and PSO banner (CCTV) images. Their alt text describes only the scene; they are never labelled as VSS staff or sites. Author and licence for each are in `_source/stock/credits.json` and shown on `/credits/` (required for the CC BY ones). **Replace them with real VSS photos when available** and remove the entry from `imageCredits` in `site.ts`. Unsplash/Pexels were not used because they need an API key or block automated access.
+
+### Downloadable brochure
+
+`public/downloads/vanshika-security-service-brochure.pdf` (A4, 6 pages, ~2 MB) is **generated from `src/content/site.ts`** by `npm run brochure` (`scripts/brochure/`), so it always matches the website: cover, about + stats + leadership + PSARA, all services, why VSS + process, industries + clients, and a contact back page with WhatsApp and website QR codes.
+
+- Download buttons ("Download Brochure" saves the file directly as `Vanshika-Security-Service-Brochure.pdf`, plus "View online"): brochure section on Home, About and Services, the **Brochure** link in the top bar on every page, and the footer.
+- After changing content in `site.ts`: `npm run brochure`, then `npm run build`.
+- The original brochure PDF and the RR Group reference PDF are kept in `_source/reference/` and are **not published** — the original contains client referees' private phone numbers, pricing and outdated details; the RR Group file is another company's brochure.
 
 ### Hero background video
 

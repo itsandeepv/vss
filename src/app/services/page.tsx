@@ -1,6 +1,6 @@
 import { photos } from "@/content/site";
 import { pageMeta } from "@/lib/meta";
-import { CtaBand, Industries, PageHero, Process, ServicesGrid, WhyUs } from "@/components/sections";
+import { BrochureCta, CtaBand, Industries, PageHero, Process, ServicesGrid, WhyUs } from "@/components/sections";
 
 export const metadata = pageMeta({
   title: "Security Services in Gurugram & Haryana – Guards, Bouncers, PSO, Manpower",
@@ -33,6 +33,7 @@ export default function ServicesPage() {
       <Industries />
       <Process />
       <WhyUs />
+      <BrochureCta />
       <CtaBand />
     </>
   );

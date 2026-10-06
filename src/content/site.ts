@@ -636,6 +636,18 @@ export const gallery: GalleryItem[] = [
   ),
 ];
 
+/**
+ * Downloadable company brochure — generated from this file by `npm run brochure`
+ * (scripts/brochure/make-brochure.tsx). Re-run after changing content, then rebuild.
+ */
+export const brochure = {
+  href: "/downloads/vanshika-security-service-brochure.pdf",
+  /** Name the file is saved as when downloaded. */
+  fileName: "Vanshika-Security-Service-Brochure.pdf",
+  cover: "/downloads/brochure-cover.webp",
+  pages: 6,
+};
+
 export const nav = [
   { href: "/", label: "Home" },
   { href: "/about/", label: "About" },

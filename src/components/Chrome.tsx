@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { business, nav, serviceHref, services, whatsappHref } from "@/content/site";
+import { brochure, business, nav, serviceHref, services, whatsappHref } from "@/content/site";
 import { Icon } from "./Icon";
 import { Year } from "./Year";
 
@@ -30,10 +30,17 @@ export function TopBar() {
             </a>
           </li>
         </ul>
-        <Link href="/#psara" className="psara-pill">
-          <Icon name="badge" size={15} />
-          PSARA Licensed
-        </Link>
+        <div className="topbar-actions">
+          <a href={brochure.href} download={brochure.fileName} className="topbar-brochure">
+            <Icon name="download" size={15} />
+            <span>Brochure</span>
+            <span className="sr-only"> (PDF download)</span>
+          </a>
+          <Link href="/#psara" className="psara-pill">
+            <Icon name="badge" size={15} />
+            PSARA Licensed
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -77,6 +84,11 @@ export function Footer() {
                 <Link href={n.href}>{n.label}</Link>
               </li>
             ))}
+            <li>
+              <a href={brochure.href} download={brochure.fileName}>
+                Download Brochure (PDF)
+              </a>
+            </li>
             <li>
               <Link href="/credits/">Image Credits</Link>
             </li>
