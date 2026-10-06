@@ -153,13 +153,13 @@ Originals go in `_source/`, never in `public/`. Then run `npm run images`, which
 | --- | --- | --- |
 | `_source/photos/` | `public/images/photos/<name>.webp` (≤1920 px) **and** `<name>-800.webp` (800 px) | Hero slides (large + mobile) and service cards (800) |
 | `_source/team/` | `public/images/team/<name>.webp` (≤600 px) | MD / team portraits |
-| `_source/clients/` | `public/images/clients/<name>.webp` (120 px tall) | Client logo marquee |
+| `_source/clients/` | `public/images/clients/<name>.webp` (120 px tall) | Client cards (logo replaces the initials) |
 
 Then reference them in `src/content/site.ts`:
 
 - **Photos:** add an entry to the `photos` catalogue — `photo("file-name-without-extension", "alt text", "50% 40%")` (the last argument is the focal point for cropping) — and use it in `services[].image` or the `gallery` list. Cards with `image: null` show an icon panel instead. To change which photos appear in the hero video, edit `CLIPS` in `scripts/make-hero-video.mjs` and run `npm run video`.
 - **MD photo:** `md.photo = "/images/team/laxmi-narain.webp"`.
-- **Client logos:** add `logo: "/images/clients/samsung.webp"` to that client's entry — the marquee then shows the logo (greyscale → colour on hover) instead of the text badge.
+- **Client logos:** add `logo: "/images/clients/glenmark.webp"` to that client's entry — the card then shows the logo instead of the initials.
 
 **Currently in use:** the 8 staff photos in `_source/photos/` (hero video, 6 service cards, gallery) and the 5 flyers in `_source/flyers/` (gallery → "Flyers" tab, with their full text as alt text). The images inside the brochure PDF are stock photos (several watermarked) and are not used.
 
@@ -184,7 +184,7 @@ All motion is CSS-first, and **everything is switched off for visitors with "red
 - Scroll reveals (IntersectionObserver): sections fade/slide in; cards stagger; About and Contact slide in from the sides; industries zoom in.
 - Process: connector line draws across, then the six steps appear one by one.
 - Hover: card lift with growing gold accent bar and icon flip; service photo slow-zoom; gold buttons get a light sweep; gallery zoom + caption slide-up.
-- Stats count up; client logos marquee; PSARA seal and WhatsApp button have a soft pulse; gold reading-progress bar at the top; header tightens on scroll.
+- Stats count up; client cards zoom in; PSARA seal and WhatsApp button have a soft pulse; gold reading-progress bar at the top; header tightens on scroll.
 - Gallery: filter chips (All / Our Team / Flyers) with staggered re-entry; lightbox with ←/→ keys, swipe, Esc, and focus returns to the photo.
 
 ## Deployment
@@ -239,7 +239,7 @@ Copy `.next/standalone/` to the server, set the environment variables, and run `
 - JSON-LD `LocalBusiness` + `ProfessionalService` (schema.org has no `SecurityService` type) with address, phones, email, founder, and `areaServed` Gurugram, Farrukhnagar, Pataudi, Haryana, Delhi NCR.
 - Fonts (Poppins + Inter) are self-hosted at build time by `next/font` — no request to Google from visitors.
 - Semantic landmarks, one `h1`, ordered headings, skip link, alt text on all images, AA contrast, keyboard-operable menu (Esc closes) and slider (arrow keys, pause button — WCAG 2.2.2), visible focus rings.
-- `prefers-reduced-motion`: slider doesn't auto-play, counters show final numbers, scroll-reveal and marquee animations are disabled (client list becomes a static wrap).
+- `prefers-reduced-motion`: slider doesn't auto-play, counters show final numbers, scroll-reveal animations are disabled.
 
 ---
 
@@ -259,14 +259,14 @@ Search the code for `TODO: confirm` to find every placeholder. Nothing below has
 | 8 | Confirm the client is happy for the staff in the supplied photos to appear publicly | `photos` in `site.ts` | 8 staff photos (hero + 6 service cards) |
 | 9 | **Real photos for PSO, Gunman, Electro-Mechanical** and the industry tiles | `_source/photos/` → `services[].image`, `industries[].image` | PSO: icon panel; others: free-licence stock images (see /credits/) |
 | 10 | **MD and team photos** (9 people listed in the brochure) | `_source/team/` → `md.photo`, `team[].photo` | Initials avatars |
-| 11 | **Permission to display client names** + **client logo files** | `clients[]`, `_source/clients/` | Names as text badges (from brochure clientele page) |
+| 11 | **Client logo files** for Alexis Global, First Choice Express, Supreme SCS, Glenmark (optional) | `clients[]`, `_source/clients/` | Initials cards |
 | 12 | **Confirm these services are offered** — not in the brochure, added per website brief: Security Supervisors, Bouncers, PSO, Gunman, Event Security | `services[]` (`confirm: true`) | Shown on site |
 | 13 | Social media profile URLs (if any) | `business.social` | None shown |
 | 14 | Relationship to **"ASM Facility Management Services"** (MG Road, Sukhrali, Sec-17 Gurugram) shown on the brochure — should it appear on the site? | — | Not shown |
 | 15 | Preferred domain form (`www` vs non-`www`) and hosting choice (cPanel Node.js App / Vercel / VPS) | hosting panel | — |
 | 16 | A **website-safe brochure PDF** for a "Download Brochure" button (the current brochure includes client reference persons' phone numbers and pricing, so it must not be published) | — | No brochure CTA |
 | 17 | Exact business name spelling — brochure uses both "Vanshika Security **Service**" and "Vanshika Security **Services**" | `business.name` | "Vanshika Security Service" |
-| 18 | **Facts found only on the flyers** — second phone 8814841354, "Pataudi Road" address line, PIN **122506 vs 122504**, Azad Singh's title (Director vs Head Sales & Mktg), "PSARA certified company" | `business` in `site.ts` | Site text uses brochure values, **but the flyers themselves are now visible in the Gallery**, so please confirm or replace them |
+| 18 | ~~Facts on the flyers~~ — **decided (Oct 2026):** flyer images stay unchanged in the Gallery; everywhere else the site uses only +91 86073 23237 | — | Done |
 | 19 | Marketing head's surname — brochure has both "Azad **Yadav**" and "Azad **Singh**" | `team` in `site.ts` | "Azad Singh" |
 | 20 | Service-page wording (overview / "what's included") — written from the brochure and website brief; please review | `services[].intro`, `includes` | Shown |
 

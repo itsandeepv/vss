@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const s = find((await params).slug);
   if (!s) notFound();
-  const [primary, helpline] = business.phones;
+  const [primary] = business.phones;
   const others = services.filter((o) => o.id !== s.id);
   const ideal = industries.filter((ind) => s.idealFor.includes(ind.title));
   const url = `${SITE_URL}${serviceHref(s.id)}`;
@@ -146,10 +146,6 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <a href={`tel:${primary.tel}`}>
                   <Icon name="phone" size={18} />
                   {primary.display}
-                </a>
-                <a href={`tel:${helpline.tel}`}>
-                  <Icon name="clock" size={18} />
-                  {helpline.display} <span className="muted">(24×7)</span>
                 </a>
                 <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
                   <Icon name="whatsapp" size={18} />

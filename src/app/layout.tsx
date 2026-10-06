@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swa
 
 const title = "Security Guard Services in Gurugram, Haryana | PSARA Agency – VSS";
 const description =
-  "PSARA licensed security agency in Gurugram, Haryana since 2016. Police-verified security guards, supervisors, bouncers, PSO, gunman, event security, housekeeping & manpower across Haryana and Delhi NCR. 24×7 QRT. Free site survey.";
+  "PSARA licensed security agency in Gurugram, Haryana. Police-verified security guards, supervisors, bouncers, PSO, gunman, event security, housekeeping & manpower across Haryana and Delhi NCR. 24×7 QRT. Free site survey.";
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerification = process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION;
@@ -84,9 +84,7 @@ export const viewport: Viewport = {
 };
 
 const place = (name: string) =>
-  name === "Haryana"
-    ? { "@type": "State", name }
-    : { "@type": "City", name, containedInPlace: { "@type": "State", name: "Haryana" } };
+  name === "Haryana" ? { "@type": "State", name } : { "@type": "City", name, containedInPlace: { "@type": "State", name: "Haryana" } };
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -105,7 +103,7 @@ const jsonLd = {
       telephone: business.phones[0].tel,
       email: business.email,
       foundingDate: String(business.foundedYear),
-      numberOfEmployees: { "@type": "QuantitativeValue", minValue: 1500 },
+      numberOfEmployees: { "@type": "QuantitativeValue", minValue: 500 },
       address: {
         "@type": "PostalAddress",
         streetAddress: business.address.street,
@@ -115,7 +113,7 @@ const jsonLd = {
         addressCountry: business.address.country,
       },
       hasMap: business.mapLinkUrl,
-      // 24×7 helpline and Quick Response Team.
+      // 24×7 Quick Response Team.
       openingHoursSpecification: {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
@@ -142,7 +140,12 @@ const jsonLd = {
         name: "Security & manpower services",
         itemListElement: services.map((s) => ({
           "@type": "Offer",
-          itemOffered: { "@type": "Service", "@id": `${SITE_URL}${serviceHref(s.id)}#service`, name: s.title, url: `${SITE_URL}${serviceHref(s.id)}` },
+          itemOffered: {
+            "@type": "Service",
+            "@id": `${SITE_URL}${serviceHref(s.id)}#service`,
+            name: s.title,
+            url: `${SITE_URL}${serviceHref(s.id)}`,
+          },
         })),
       },
       ...(psara.licenceNo
@@ -152,7 +155,7 @@ const jsonLd = {
       contactPoint: business.phones.map((p) => ({
         "@type": "ContactPoint",
         telephone: p.tel,
-        contactType: p.label === "Sales" ? "sales" : "customer support",
+        contactType: "customer service",
         areaServed: "IN",
         availableLanguage: ["en", "hi"],
       })),

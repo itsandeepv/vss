@@ -8,13 +8,13 @@
 - Business name: Vanshika Security Service (VSS) — brochure also writes "Vanshika Security Services"
 - Tagline: "Think Security First"
 - Strapline: "Securing Your Asset & Assist in Facility Management Services with Latest Technology & Processes."
-- Founded: 2016 ("Formed in 2016 with 10 to 12 years of experienced team in same industry")
+- Established: 2025 (confirmed by client, Oct 2026; brochure said 2016 — superseded). Team has 10 to 12 years of industry experience (brochure).
 - Logo: gold-winged eagle on black shield, blue "VSS" centre (`_source/vss-logo-original.png`)
 
 ## Contact
 - Address: Ward No. 2, Farrukhnagar, Near Govt. Senior Sec. School, Joniawas, Teh. Farrukhnagar, Gurgaon (HR) 122504
 - Phone 1 (Head Sales & Mktg — Azad Singh): 8607323237
-- Phone 2 (24×7 helpline): 7404264232
+- Phone 2 (7404264232) — REMOVED: client confirmed only one number is to be used (Oct 2026)
 - WhatsApp: 8607323237 (brochure: "WhatsApp @ or Call @ 8607323237" for sales team) — TODO: confirm
 - Email: vssagency05@gmail.com
 - Website domain: TODO
@@ -29,10 +29,10 @@
 - Operating states (from commercial table): Delhi, Haryana, Rajasthan, Uttar Pradesh
 
 ## Stats (from "VSS Overview")
-- Manpower: 1500+ in North India (approx. 50% security, rest helpers, welders, housekeeping & FM staff)
-- Clients: 40+
-- Working sites: 120+
-- Years: since 2016
+- Manpower: 500+ (confirmed by client, Oct 2026; brochure said 1500+ — superseded)
+- Clients: 4 — Alexis Global, First Choice Express, Supreme SCS, Glenmark (confirmed by client, Oct 2026)
+- Working sites: not shown (brochure said 120+; not confirmed)
+- Years: since 2025
 
 ## Management
 - MD / Owner: Capt. Laxmi Narain — 32 years served in the Indian Army; "commands with strict rules and regulations to follow our ops guidelines". Photo: TODO ("Pic will be updated soon")
@@ -62,7 +62,10 @@ VSS serves a wide range of customers in a variety of industries and customer seg
 - Fire & safety: trained fire control room staff, sprinkler / hydrant / fire-fighting system checks, monthly training & mock drills, CCTV controller
 - Requested by client brief (not in brochure) — TODO confirm offered: Security Supervisors, Bouncers, PSO, Gunman (subject to applicable arms licensing and regulations), Event Security
 
-## Clients (from "Our Clientele" logo page — display as names only)
+## Clients
+**Confirmed by client (Oct 2026) — the only clients to show:** Alexis Global, First Choice Express, Supreme SCS, Glenmark.
+
+### Superseded: brochure "Our Clientele" list (no longer used on the site)
 Samsung, Syska LED, Metro Cash & Carry, Citykart, Pantaloons, Central, Big Bazaar, fbb, Foodhall, Brand Factory, HomeTown, Ezone, Myntra, Jabong, Licious, Bikanervala, Tata Housing, M3M, Ansal API, Raj Mandir Hypermarket, Accuprint, ProFac, 247 Daily Needs, Jagdish Store, Print Partners, 24Karat, Oysters
 Also named as feedback references (companies only — NEVER publish the reference persons' phone numbers): Weeltech Rollers Pvt Ltd (Bawal), Atlas Electrical Pvt Ltd (Bawal), Priyanka Industries (Bawal)
 - TODO: client to confirm permission to show these names, and supply logo files for `assets/clients/`
@@ -72,7 +75,7 @@ Also named as feedback references (companies only — NEVER publish the referenc
   `guards-blue-uniform-gate.png` was cropped to remove the phone-camera date stamp.
 - `_source/flyers/` — 5 marketing flyers / business-card designs. Shown in the website Gallery ("Flyers" tab) at the client's request,
   with full text descriptions as alt text. They contain details that are NOT in the brochure — TODO: confirm, because they are now visible on the site:
-  - Second phone number: 8814841354
+  - Second phone number: 8814841354 (client decision Oct 2026: keep flyer images as they are; use only 8607323237 everywhere else)
   - "Azad Singh — Director" (brochure: "Head Sales & Mktg")
   - Address line "Pataudi Road, Farrukhnagar, Gurgaon, Haryana"
   - PIN code 122506 on flyers vs 122504 in brochure — which is correct?

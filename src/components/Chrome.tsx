@@ -40,7 +40,7 @@ export function TopBar() {
 }
 
 export function Footer() {
-  const [primaryPhone, helpline] = business.phones;
+  const [primaryPhone] = business.phones;
   return (
     <footer className="site-footer">
       <div className="container footer-grid">
@@ -62,7 +62,7 @@ export function Footer() {
           </Link>
           <p>
             PSARA-licensed security &amp; manpower agency in Farrukhnagar, Gurugram, providing trained, police-verified guards and facility
-            staff across North India since 2016.
+            staff across Haryana and Delhi NCR. Established 2025.
           </p>
           <a className="footer-wa" href={whatsappHref} target="_blank" rel="noopener noreferrer">
             <Icon name="whatsapp" size={18} />
@@ -103,8 +103,6 @@ export function Footer() {
               <Icon name="phone" size={18} />
               <span>
                 <a href={`tel:${primaryPhone.tel}`}>{primaryPhone.display}</a>
-                <br />
-                <a href={`tel:${helpline.tel}`}>{helpline.display}</a>
               </span>
             </li>
             <li>

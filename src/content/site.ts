@@ -15,12 +15,9 @@ export const business = {
   legalName: "Vanshika Security Service (VSS)",
   tagline: "Think Security First",
   strapline: "Securing your assets and assisting in facility management with the latest technology and processes.",
-  foundedYear: 2016,
-  phones: [
-    { label: "Sales", display: "+91 86073 23237", tel: "+918607323237" },
-    { label: "24×7 Helpline", display: "+91 74042 64232", tel: "+917404264232" },
-  ],
-  /** TODO: confirm — brochure lists 8607323237 for "WhatsApp or Call" (sales team). */
+  foundedYear: 2025,
+  /** One number for calls and WhatsApp (confirmed by client). */
+  phones: [{ label: "Call / WhatsApp", display: "+91 86073 23237", tel: "+918607323237" }],
   whatsapp: "918607323237",
   whatsappMessage: "Hi, I need security services for my site.",
   email: "vssagency05@gmail.com",
@@ -41,7 +38,21 @@ export const business = {
    * Haryana / NCR cities named in SEO metadata and schema (not shown in the UI).
    * TODO: confirm — trim to the cities VSS actually deploys to.
    */
-  seoCities: ["Gurugram", "Manesar", "Farrukhnagar", "Pataudi", "Sohna", "Rewari", "Jhajjar", "Bahadurgarh", "Faridabad", "Sonipat", "Rohtak", "Panipat", "Delhi NCR"],
+  seoCities: [
+    "Gurugram",
+    "Manesar",
+    "Farrukhnagar",
+    "Pataudi",
+    "Sohna",
+    "Rewari",
+    "Jhajjar",
+    "Bahadurgarh",
+    "Faridabad",
+    "Sonipat",
+    "Rohtak",
+    "Panipat",
+    "Delhi NCR",
+  ],
   /** TODO: confirm — no social profiles in the brochure. Add URLs here (used in footer + schema). */
   social: [] as { label: string; url: string }[],
 };
@@ -58,13 +69,14 @@ export const psara = {
   operatingStates: ["Delhi", "Haryana", "Rajasthan", "Uttar Pradesh"],
 };
 
-/** "VSS Overview" slide. `value` is the number to count up to. */
-export const stats = [
-  { value: 1500, suffix: "+", label: "Trained Manpower", note: "across North India" },
-  { value: 40, suffix: "+", label: "Clients", note: "served" },
-  { value: 120, suffix: "+", label: "Working Sites", note: "in North India" },
-  { value: null, suffix: "+", label: "Years of Service", note: "since 2016", sinceYear: 2016 },
-] as const;
+/** Stats strip — figures confirmed by the client (Oct 2026). `text` shows as-is; `value` counts up. */
+export type Stat = { label: string; note: string; value?: number; text?: string; suffix?: string; plain?: boolean };
+export const stats: Stat[] = [
+  { value: 500, suffix: "+", label: "Trained Manpower", note: "guards & facility staff" },
+  { value: 4, label: "Key Clients", note: "trusted partners" },
+  { text: "24×7", label: "Quick Response", note: "on-site emergency support" },
+  { value: 2025, plain: true, label: "Established", note: "Farrukhnagar, Gurugram" },
+];
 
 export const md = {
   name: "Capt. Laxmi Narain",
@@ -77,10 +89,10 @@ export const md = {
 
 export const about = {
   intro:
-    "Vanshika Security Service (VSS) is a growing security and facility management group, formed in 2016 by a team with 10 to 12 years of experience in the industry. We serve a wide range of customers across industries and customer segments.",
+    "Vanshika Security Service (VSS) is a growing security and facility management group, established in 2025 by a team with 10 to 12 years of experience in the industry. We serve a wide range of customers across industries and customer segments.",
   body: "Our protective services are developed together with our customers and designed to use technology wherever it helps. Manned guarding remains the cornerstone of VSS, and we keep developing what we offer so we can meet each customer's specific needs at a competitive price.",
   points: [
-    "Approx. 50% of our 1500+ workforce in security; the rest in housekeeping, facility management, helpers and technical staff",
+    "500+ trained manpower: security guards plus housekeeping, facility management, helpers and technical staff",
     "Ground-level experience with technology-based reporting",
     "Learning shared across markets for the benefit of every customer",
   ],
@@ -512,42 +524,12 @@ export const processSteps = [
 ];
 
 /**
- * Client names from the brochure's "Our Clientele" page.
- * TODO: confirm — client permission to display names; logos go in _source/clients (see README).
- * Set `logo` to "/images/clients/<file>.webp" once a logo is supplied.
+ * Clients — confirmed by the client (Oct 2026). Add `logo: "/images/clients/<file>.webp"` when logo files
+ * are supplied (originals in _source/clients, then `npm run images`).
  */
-export const clients: { name: string; logo?: string }[] = [
-  "Samsung",
-  "Metro Cash & Carry",
-  "Tata Housing",
-  "M3M",
-  "Ansal API",
-  "Pantaloons",
-  "Central",
-  "Big Bazaar",
-  "Brand Factory",
-  "fbb",
-  "Foodhall",
-  "HomeTown",
-  "Myntra",
-  "Jabong",
-  "Licious",
-  "Bikanervala",
-  "Citykart",
-  "Syska LED",
-  "Ezone",
-  "Raj Mandir Hypermarket",
-  "Accuprint",
-  "ProFac",
-  "247 Daily Needs",
-  "Jagdish Store",
-  "Print Partners",
-  "24Karat",
-  "Oysters",
-  "Weeltech Rollers Pvt Ltd",
-  "Atlas Electrical Pvt Ltd",
-  "Priyanka Industries",
-].map((name) => ({ name }));
+export const clients: { name: string; logo?: string }[] = ["Alexis Global", "First Choice Express", "Supreme SCS", "Glenmark"].map(
+  (name) => ({ name }),
+);
 
 /**
  * Hero background video — built from the real staff photos by `npm run video`
@@ -573,7 +555,8 @@ export const heroCaptions = [
 
 /**
  * Gallery. `team` = real photos of VSS staff; `flyers` = the client's own marketing flyers.
- * TODO: confirm — flyers show phone 8814841354 and PIN 122506, which differ from the brochure (see content.md).
+ * Flyer images are shown unchanged (client decision, Oct 2026) even though they print a second number;
+ * all site text uses only business.phones (+91 86073 23237).
  */
 export type GalleryItem = {
   id: string;
@@ -626,7 +609,7 @@ export const gallery: GalleryItem[] = [
   flyer(
     "flyer-services-overview",
     "Complete security solutions",
-    "Vanshika Security Service (VSS) flyer: security services for offices, factories, schools, hospitals, societies and commercial premises, including trained security guards, 24×7 security, bouncer service, gunman service and event, VIP, industrial and personal security. Contact 8607323237, 8814841354.",
+    "Vanshika Security Service (VSS) flyer: security services for offices, factories, schools, hospitals, societies and commercial premises, including trained security guards, 24×7 security, bouncer service, gunman service and event, VIP, industrial and personal security. Contact 8607323237.",
     800,
     1200,
   ),
@@ -640,14 +623,14 @@ export const gallery: GalleryItem[] = [
   flyer(
     "flyer-business-card-banner",
     "Business card",
-    "Vanshika Security Service business card: PSARA certified company offering security, manpower, bouncer, PSO and gunman services. Farrukhnagar, Gurugram, Haryana; 8607323237, 8814841354; vssagency05@gmail.com.",
+    "Vanshika Security Service business card: PSARA certified company offering security, manpower, bouncer, PSO and gunman services. Farrukhnagar, Gurugram, Haryana; 8607323237; vssagency05@gmail.com.",
     800,
     485,
   ),
   flyer(
     "flyer-business-card-azad-singh",
     "Business card: Azad Singh",
-    "VSS Security business card for Azad Singh, Director: 8607323237, 8814841354, vssagency05@gmail.com, Farrukhnagar, Gurugram, Haryana. Services: corporate and industrial, residential and event security, bouncers, PSO, gunman and manpower supply.",
+    "VSS Security business card for Azad Singh, Director: 8607323237, vssagency05@gmail.com, Farrukhnagar, Gurugram, Haryana. Services: corporate and industrial, residential and event security, bouncers, PSO, gunman and manpower supply.",
     800,
     533,
   ),

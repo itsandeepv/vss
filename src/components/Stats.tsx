@@ -2,16 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { stats } from "@/content/site";
-import { useCurrentYear } from "@/lib/hooks";
 
-/** Final value for each stat. "Years" is derived from the founding year so it never goes stale. */
-function target(s: (typeof stats)[number], year: number) {
-  return "sinceYear" in s && s.sinceYear ? year - s.sinceYear : (s.value ?? 0);
-}
+const fmt = (n: number, plain?: boolean) => (plain ? String(n) : n.toLocaleString("en-IN"));
 
-export function Stats({ buildYear }: { buildYear: number }) {
+export function Stats() {
   const ref = useRef<HTMLUListElement>(null);
-  const year = useCurrentYear(buildYear);
   // null → show final numbers (prerendered HTML, no-JS, reduced motion, and after the count-up).
   const [progress, setProgress] = useState<number | null>(null);
 
@@ -44,17 +39,18 @@ export function Stats({ buildYear }: { buildYear: number }) {
   return (
     <ul className="stats-grid" ref={ref}>
       {stats.map((s) => {
-        const final = target(s, year);
-        const shown = progress === null ? final : Math.round(final * progress);
+        // Text stats ("24×7") and plain years ("2025") show as-is; counts animate up.
+        const final = s.text ?? fmt(s.value ?? 0, s.plain);
+        const shown = s.text !== undefined || s.plain || progress === null ? final : fmt(Math.round((s.value ?? 0) * progress));
         return (
           <li key={s.label} className="stat">
             <span className="stat-value" aria-hidden="true">
-              {shown.toLocaleString("en-IN")}
+              {shown}
               {s.suffix}
             </span>
             <span className="sr-only">
               {final}
-              {s.suffix} {s.label} {s.note}
+              {s.suffix} {s.label}, {s.note}
             </span>
             <span className="stat-label" aria-hidden="true">
               {s.label}

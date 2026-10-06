@@ -24,7 +24,6 @@ import { ContactForm } from "./ContactForm";
 
 /** Shared, server-rendered page sections. Pages compose these in different orders. */
 
-const BUILD_YEAR = new Date().getFullYear();
 const i = (n: number) => ({ "--i": n }) as React.CSSProperties;
 const small = (p: Photo) => p.src.replace(/\.webp$/, "-800.webp");
 
@@ -118,7 +117,7 @@ export function StatsStrip() {
   return (
     <section className="stats-strip" aria-label="VSS in numbers">
       <div className="container">
-        <Stats buildYear={BUILD_YEAR} />
+        <Stats />
       </div>
     </section>
   );
@@ -149,8 +148,8 @@ export function AboutSplit({ full = false }: { full?: boolean }) {
             loading="lazy"
           />
           <div className="about-badge">
-            <span className="about-badge-num">2016</span>
-            <span className="about-badge-label">Serving since</span>
+            <span className="about-badge-num">2025</span>
+            <span className="about-badge-label">Established</span>
           </div>
         </div>
         <div className="reveal reveal-right">
@@ -470,39 +469,41 @@ export function GalleryTeaser() {
   );
 }
 
-/* ---------- Clients marquee ---------- */
+/* ---------- Clients ---------- */
 export function Clients() {
-  // Rendered twice for a seamless loop; the copy is hidden from assistive tech.
-  const row = (hidden: boolean) => (
-    <ul className="marquee-row" aria-hidden={hidden || undefined}>
-      {clients.map((c) => (
-        <li key={c.name} className={c.logo ? "client-logo" : "client-badge"}>
-          {c.logo ? (
-            // eslint-disable-next-line @next/next/no-img-element -- pre-optimised WebP, static export
-            <img src={c.logo} alt={hidden ? "" : c.name} height={60} loading="lazy" />
-          ) : (
-            c.name
-          )}
-        </li>
-      ))}
-    </ul>
-  );
+  const initials = (n: string) =>
+    n
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase();
   return (
     <section id="clients" className="section section-alt" aria-labelledby="clients-title">
       <div className="container">
         <SectionHead
           id="clients-title"
           eyebrow="Our clientele"
-          title="Trusted by 40+ clients across North India"
-          text="Some of the brands and businesses whose sites VSS has served."
+          title="Trusted by leading businesses"
+          text="Companies that rely on VSS for trained security and manpower."
         />
-      </div>
-      {/* TODO: confirm — permission to display client names; swap in logos when supplied. */}
-      <div className="marquee reveal">
-        <div className="marquee-track">
-          {row(false)}
-          {row(true)}
-        </div>
+        <ul className="client-grid">
+          {clients.map((c, n) => (
+            <li key={c.name} className="client-card reveal reveal-zoom" style={i(n)}>
+              {c.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element -- pre-optimised WebP
+                <img src={c.logo} alt={c.name} height={60} loading="lazy" />
+              ) : (
+                <>
+                  <span className="client-mono" aria-hidden="true">
+                    {initials(c.name)}
+                  </span>
+                  <span className="client-name">{c.name}</span>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

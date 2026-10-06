@@ -28,6 +28,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
     page("/about/", 0.7, "monthly", [photos.independenceDay.src]),
     page("/contact/", 0.8, "yearly"),
-    page("/gallery/", 0.6, "monthly", gallery.map((g) => g.full)),
+    page(
+      "/gallery/",
+      0.6,
+      "monthly",
+      gallery.map((g) => g.full),
+    ),
   ];
 }

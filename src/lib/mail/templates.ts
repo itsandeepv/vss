@@ -191,7 +191,7 @@ export function autoReplySubject() {
 }
 
 export function autoReplyHtml(e: Enquiry) {
-  const [sales, helpline] = business.phones;
+  const [sales] = business.phones;
   const steps = [
     ["1", "We call you", "A member of our team will call you back to understand your requirement."],
     ["2", "Site survey", "We visit your site to assess risks, entry points and manpower needs."],
@@ -229,8 +229,7 @@ export function autoReplyHtml(e: Enquiry) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><tr>
       <td bgcolor="${NAVY}" style="background:${NAVY};border-radius:12px;padding:18px 20px;font-size:14px;line-height:1.7;color:#e8ecf4;">
         <strong style="color:${GOLD};">Need us urgently?</strong><br>
-        Sales: <a href="tel:${sales.tel}" style="color:#ffffff;font-weight:700;text-decoration:none;">${esc(sales.display)}</a><br>
-        24×7 Helpline: <a href="tel:${helpline.tel}" style="color:#ffffff;font-weight:700;text-decoration:none;">${esc(helpline.display)}</a><br>
+        Call / WhatsApp: <a href="tel:${sales.tel}" style="color:#ffffff;font-weight:700;text-decoration:none;">${esc(sales.display)}</a><br>
         Email: <a href="mailto:${business.email}" style="color:#ffffff;text-decoration:none;">${esc(business.email)}</a>
       </td>
     </tr></table>
@@ -246,7 +245,7 @@ export function autoReplyHtml(e: Enquiry) {
 }
 
 export function autoReplyText(e: Enquiry) {
-  const [sales, helpline] = business.phones;
+  const [sales] = business.phones;
   return [
     `Dear ${e.name},`,
     "",
@@ -254,7 +253,7 @@ export function autoReplyText(e: Enquiry) {
     "",
     "What happens next: 1) we call you  2) site survey  3) deployment plan & quote.",
     "",
-    `Need us urgently? Sales ${sales.display} · 24×7 Helpline ${helpline.display} · ${business.email}`,
+    `Need us urgently? Call / WhatsApp ${sales.display} · ${business.email}`,
     "",
     `Regards,\nTeam ${business.name}\n${business.address.full}`,
   ].join("\n");

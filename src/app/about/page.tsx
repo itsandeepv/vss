@@ -7,7 +7,7 @@ import { AboutSplit, CtaBand, MdFeature, PageHero, Psara, SectionHead, StatsStri
 export const metadata = pageMeta({
   title: "About Us – PSARA Licensed Security Agency in Gurugram, Haryana",
   description:
-    "Vanshika Security Service (VSS), formed in 2016 and led by Capt. Laxmi Narain (32 years, Indian Army). 1500+ trained manpower, 40+ clients and 120+ sites across Haryana, Delhi NCR and North India.",
+    "Vanshika Security Service (VSS), established in 2025 and led by Capt. Laxmi Narain (32 years, Indian Army). 500+ trained manpower serving clients including Alexis Global, First Choice Express, Supreme SCS and Glenmark.",
   path: "/about/",
   keywords: [
     "PSARA licensed security agency Haryana",
@@ -23,7 +23,7 @@ export default function AboutPage() {
     <>
       <PageHero
         title="About Vanshika Security Service"
-        tagline="A growing security and facility management group, serving North India since 2016."
+        tagline="A growing security and facility management agency, established in 2025 in Farrukhnagar, Gurugram."
         image={photos.independenceDay}
         crumbs={[{ href: "/about/", label: "About" }]}
       />
